@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}New client | Happy Weddings{% endblock %}
+{% block content %}
+<div class="form-layout"><p class="eyebrow">Operation 01</p><h1>New client</h1><p class="lede">Add a person to the Happy Weddings registry.</p>
+<article><form method="post">
+  <label>First name<input name="first_name" required maxlength="16" autocomplete="given-name"></label>
+  <label>Last name<input name="last_name" required maxlength="16" autocomplete="family-name"></label>
+  <label>Phone<input name="phone" required maxlength="16" autocomplete="tel"></label>
+  <div class="form-actions"><a href="{{ url_for('dashboard') }}" role="button" class="secondary">Cancel</a><button type="submit">Save client</button></div>
+</form></article></div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | Happy Weddings{% endblock %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Happy Weddings</h1>
+    <p class="lede">Database application for managing wedding services.</p>
+  </div>
+  <aside class="hero-panel">
+    <p class="eyebrow">Database status</p>
+    <div class="status"><span class="status-dot {% if oracle.connected %}online{% endif %}"></span>{% if oracle.connected %}Oracle connected{% else %}Oracle unavailable{% endif %}</div>
+    {% if oracle.connected %}<small>User {{ oracle.user }} · service {{ oracle.service }}</small>{% else %}<small>Start the container and check the credentials.</small>{% endif %}
+  </aside>
+</section>
+<section>
+  <p class="eyebrow">Available operations</p>
+  <div class="operations">
+    <a class="operation-card" href="{{ url_for('new_client') }}"><span class="operation-number">01</span><h3>New client</h3><p>Insert name, surname and contact.</p></a>
+    <a class="operation-card" href="{{ url_for('catering') }}"><span class="operation-number">02</span><h3>Catering details</h3><p>View restaurant, menus, dishes and wines.</p></a>
+    <a class="operation-card" href="{{ url_for('new_order') }}"><span class="operation-number">03</span><h3>New order</h3><p>Connect a client, dates and requested services.</p></a>
+    <a class="operation-card" href="{{ url_for('services_lookup') }}"><span class="operation-number">04</span><h3>Client services</h3><p>View the client's request history.</p></a>
+  </div>
+</section>
+{% endblock %}
