@@ -5,13 +5,25 @@ from typing import Any
 from flask import Flask, flash, redirect, render_template, request, url_for
 import oracledb
 
+from dotenv import load_dotenv
+load_dotenv()
 
+
+# Flask application setup
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "happy-weddings-development-key")
 _pool: oracledb.ConnectionPool | None = None
 
 
 def database_dsn() -> str:
+	"""
+	Returns the database connection string based on environment variables,
+	with defaults for local development.
+
+	Returns:
+		str: The database connection string in the format "host:port/service".
+	"""
+
 	return (
 		f"{os.getenv('ORACLE_HOST', 'localhost')}:"
 		f"{os.getenv('ORACLE_PORT', '1521')}/"
@@ -20,6 +32,13 @@ def database_dsn() -> str:
 
 
 def get_pool() -> oracledb.ConnectionPool:
+	"""
+	Returns a connection pool for the Oracle database, creating it if it doesn't exist.
+
+	Returns:
+		oracledb.ConnectionPool: The connection pool for the Oracle database.
+	"""
+
 	global _pool
 	if _pool is None:
 		_pool = oracledb.create_pool(
@@ -35,6 +54,13 @@ def get_pool() -> oracledb.ConnectionPool:
 
 @contextmanager
 def get_connection():
+	"""
+	Context manager that yields a connection from the Oracle database connection pool.
+
+	Yields:
+		oracledb.Connection: A connection from the Oracle database connection pool.
+	"""
+
 	connection = get_pool().acquire()
 	try:
 		yield connection
@@ -43,14 +69,26 @@ def get_connection():
 
 
 def close_pool() -> None:
+	"""
+	Closes the Oracle database connection pool if it exists.
+	"""
+
 	if _pool is not None:
 		_pool.close()
 
 
+# Register the close_pool function to be called when the application exits
 atexit.register(close_pool)
 
 
 def connection_status() -> dict[str, Any]:
+	"""
+	Returns the connection status to the Oracle database, including the connected user and service name.
+
+	Returns:
+		dict[str, Any]: A dictionary containing the connection status, user, and service name
+	"""
+
 	try:
 		with get_connection() as connection:
 			with connection.cursor() as cursor:
@@ -64,6 +102,13 @@ def connection_status() -> dict[str, Any]:
 
 
 def fetch_catalog_data() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+	"""
+	Fetches the catalog data for clients and services from the Oracle database.
+
+	Returns:
+		tuple[list[dict[str, Any]], list[dict[str, Any]]]: A tuple containing two lists of dictionaries: one for clients and one for services. Each dictionary contains the relevant data for a client or service.
+	"""
+
 	clients: list[dict[str, Any]] = []
 	services: list[dict[str, Any]] = []
 	with get_connection() as connection:
@@ -89,11 +134,29 @@ def fetch_catalog_data() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
 
 @app.get("/")
 def dashboard():
+	"""
+	Renders the dashboard page with the connection status to the Oracle database.
+
+	Returns:
+		str: The rendered HTML for the dashboard page.
+	"""
+
 	return render_template("dashboard.html", oracle=connection_status())
 
 
 @app.route("/clients/new", methods=["GET", "POST"])
 def new_client():
+	"""
+	Renders the new client form and handles the submission of new client data to the Oracle database.
+	If the request method is POST, it attempts to insert the new client data into the database using a stored procedure.
+	If successful, it flashes a success message and redirects to the new client form.
+	If there is an error, it flashes an error message.
+	If the request method is GET, it simply renders the new client form.
+
+	Returns:
+		str: The rendered HTML for the new client form or a redirect to the new client form after successful submission.
+	"""
+
 	if request.method == "POST":
 		try:
 			with get_connection() as connection:
@@ -116,6 +179,17 @@ def new_client():
 
 @app.route("/orders/new", methods=["GET", "POST"])
 def new_order():
+	"""
+	Renders the new order form and handles the submission of new order data to the Oracle database.
+	If the request method is POST, it attempts to insert the new order data into the database using a stored procedure.
+	If successful, it flashes a success message and redirects to the new order form.
+	If there is an error, it flashes an error message.
+	If the request method is GET, it fetches the catalog data for clients and services and renders the new order form.
+
+	Returns:
+		str: The rendered HTML for the new order form or a redirect to the new order form after successful submission.
+	"""
+
 	try:
 		clients, services = fetch_catalog_data()
 	except oracledb.Error as error:
@@ -155,6 +229,16 @@ def new_order():
 
 @app.get("/clients/<client_ref>/services")
 def client_services(client_ref: str):
+	"""
+	Renders the services requested by a specific client, identified by their reference.
+
+	Args:
+		client_ref (str): The reference of the client whose services are to be displayed.
+
+	Returns:
+		str: The rendered HTML for the client's services page, including a list of services with their wedding date, description, minimum cost, maximum cost, and category.
+	"""
+
 	rows: list[dict[str, Any]] = []
 	try:
 		with get_connection() as connection:
@@ -185,6 +269,13 @@ def client_services(client_ref: str):
 
 @app.get("/services")
 def services_lookup():
+	"""
+	Renders the services lookup page, displaying a list of all available services from the Oracle database.
+
+	Returns:
+		str: The rendered HTML for the services lookup page, including a list of services with their description, minimum cost, maximum cost, and lead time.
+	"""
+
 	try:
 		clients, _ = fetch_catalog_data()
 	except oracledb.Error as error:
@@ -195,6 +286,15 @@ def services_lookup():
 
 @app.route("/catering", methods=["GET", "POST"])
 def catering():
+	"""
+	Renders the catering page, displaying a list of catering services and their proposed menus from the Oracle database.
+	If the request method is POST and a service reference is provided, it fetches the restaurant information
+	and proposed menus for the selected catering service.
+
+	Returns:
+		str: The rendered HTML for the catering page, including a list of catering services, restaurant information, and proposed menus with their dishes and wines.
+	"""
+
 	services: list[dict[str, Any]] = []
 	menus: list[dict[str, Any]] = []
 	restaurant: dict[str, Any] | None = None
