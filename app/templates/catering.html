@@ -1,8 +1,49 @@
 {% extends "base.html" %}
 {% block title %}Catering details | Happy Weddings{% endblock %}
 {% block content %}
-<div class="form-layout"><p class="eyebrow">Operation 02</p><h1>Catering details</h1><p class="lede">Select a catering service to view its restaurant, menus, dishes and wines.</p>
-<article><form method="post"><label>Catering service<select name="service_ref" required>{% for service in services %}<option value="{{ service.ref }}"{% if request.form.get('service_ref') == service.ref|string %} selected{% endif %}>{{ service.description }}</option>{% else %}<option>No catering services available</option>{% endfor %}</select></label><div class="form-actions"><a href="{{ url_for('dashboard') }}" role="button" class="secondary">Back to dashboard</a><button type="submit">Show details</button></div></form></article>
-{% if restaurant %}<article><p class="eyebrow">Restaurant</p><h2>{{ restaurant.name }}</h2><p class="restaurant-address">{{ restaurant.address }}</p>{% for menu in menus %}<hr><h3>Menu {{ loop.index }}</h3><strong>Dishes</strong><ul>{% for dish in menu.dishes %}<li>{{ dish.description }} <small>({{ dish.dish_type }})</small></li>{% endfor %}</ul><strong>Wines</strong><ul>{% for wine in menu.wines %}<li>{{ wine.name }}</li>{% endfor %}</ul>{% endfor %}</article>{% endif %}
-</div>
+    <div class="form-layout">
+        <p class="eyebrow">Operation 02</p>
+        <h1>Catering details</h1>
+        <p class="lede">Select a catering service to view its restaurant, menus, dishes and wines.</p>
+        <article>
+            <form method="post">
+                <label>Catering service
+                    <select name="service_ref" required>
+                        {% for service in services %}
+                            <option value="{{ service.ref }}"{% if request.form.get('service_ref') == service.ref|string %} selected{% endif %}>{{ service.description }}</option>
+                        {% else %}
+                            <option>No catering services available</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <div class="form-actions">
+                    <a href="{{ url_for('dashboard') }}" role="button" class="secondary">Back to dashboard</a>
+                    <button type="submit">Show details</button>
+                </div>
+            </form>
+        </article>
+        {% if restaurant %}
+            <article>
+                <p class="eyebrow">Restaurant</p>
+                <h2>{{ restaurant.name }}</h2>
+                <p class="restaurant-address">{{ restaurant.address }}</p>
+                {% for menu in menus %}
+                    <hr>
+                    <h3>Menu {{ loop.index }}</h3>
+                    <strong>Dishes</strong>
+                    <ul>
+                        {% for dish in menu.dishes %}
+                            <li>{{ dish.description }} <small>({{ dish.dish_type }})</small></li>
+                        {% endfor %}
+                    </ul>
+                    <strong>Wines</strong>
+                    <ul>
+                        {% for wine in menu.wines %}
+                            <li>{{ wine.name }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </article>
+        {% endif %}
+    </div>
 {% endblock %}

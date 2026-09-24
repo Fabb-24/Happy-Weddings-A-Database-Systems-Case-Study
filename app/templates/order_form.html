@@ -1,12 +1,40 @@
 {% extends "base.html" %}
 {% block title %}New order | Happy Weddings{% endblock %}
 {% block content %}
-<div class="form-layout"><p class="eyebrow">Operation 03</p><h1>New order</h1><p class="lede">Select the client, dates and requested services.</p>
-<article><form method="post">
-  <label>Client<select name="client_ref" required>{% for client in clients %}<option value="{{ client.ref }}">{{ client.first_name }} {{ client.last_name }} · {{ client.phone }}</option>{% endfor %}</select></label>
-  <div class="grid"><label>Wedding date<input name="wedding_date" type="date" required></label><label>Filing date<input name="filing_date" type="date" required></label></div>
-  <label>Requested services</label>
-  <div class="service-list">{% for service in services %}<label class="service-option"><input type="checkbox" name="service_refs" value="{{ service.ref }}"><span><strong>{{ service.description }}</strong><small>{{ service.min_cost }} - {{ service.max_cost }} · lead time {{ service.lead_time }} days</small></span></label>{% else %}<p class="empty">No services available in the catalog.</p>{% endfor %}</div>
-  <div class="form-actions"><a href="{{ url_for('dashboard') }}" role="button" class="secondary">Cancel</a><button type="submit">Register order</button></div>
-</form></article></div>
+  <div class="form-layout">
+    <p class="eyebrow">Operation 03</p>
+    <h1>New order</h1>
+    <p class="lede">Select the client, dates and requested services.</p>
+    <article>
+      <form method="post">
+        <label>Client<select name="client_ref" required>
+          {% for client in clients %}
+            <option value="{{ client.ref }}">{{ client.first_name }} {{ client.last_name }} · {{ client.phone }}</option>
+          {% endfor %}
+        </select></label>
+        <div class="grid">
+          <label>Wedding date<input name="wedding_date" type="date" required></label>
+          <label>Filing date<input name="filing_date" type="date" required></label>
+        </div>
+        <label>Requested services</label>
+        <div class="service-list">
+          {% for service in services %}
+            <label class="service-option">
+              <input type="checkbox" name="service_refs" value="{{ service.ref }}">
+              <span>
+                <strong>{{ service.description }}</strong>
+                <small>{{ service.min_cost }} - {{ service.max_cost }} · lead time {{ service.lead_time }} days</small>
+              </span>
+            </label>
+          {% else %}
+            <p class="empty">No services available in the catalog.</p>
+          {% endfor %}
+        </div>
+        <div class="form-actions">
+          <a href="{{ url_for('dashboard') }}" role="button" class="secondary">Cancel</a>
+          <button type="submit">Register order</button>
+        </div>
+      </form>
+    </article>
+  </div>
 {% endblock %}

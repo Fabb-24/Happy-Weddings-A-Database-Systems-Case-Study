@@ -1,6 +1,41 @@
 {% extends "base.html" %}
 {% block title %}Requested services | Happy Weddings{% endblock %}
 {% block content %}
-<p class="eyebrow">Operation 04</p><h1>Requested services</h1><p class="lede">Request history for the selected client.</p>
-<article><div class="table-wrap"><table><thead><tr><th>Service</th><th>Category</th><th>Wedding date</th><th>Minimum cost</th><th>Maximum cost</th></tr></thead><tbody>{% for row in rows %}<tr><td>{{ row.description }}</td><td>{{ row.category }}</td><td>{{ row.wedding_date.strftime('%d/%m/%Y') }}</td><td>{{ row.min_cost }}</td><td>{{ row.max_cost }}</td></tr>{% else %}<tr><td colspan="5" class="empty">No requested services.</td></tr>{% endfor %}</tbody></table></div><div class="form-actions"><a href="{{ url_for('services_lookup') }}" role="button" class="secondary">Back to client list</a><a href="{{ url_for('dashboard') }}" role="button" class="secondary">Back to dashboard</a></div></article>
+    <p class="eyebrow">Operation 04</p>
+    <h1>Requested services</h1>
+    <p class="lede">Request history for the selected client.</p>
+    <article>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Category</th>
+                        <th>Wedding date</th>
+                        <th>Minimum cost</th>
+                        <th>Maximum cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                        <tr>
+                            <td>{{ row.description }}</td>
+                            <td>{{ row.category }}</td>
+                            <td>{{ row.wedding_date.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ row.min_cost }}</td>
+                            <td>{{ row.max_cost }}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="empty">No requested services.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="form-actions">
+            <a href="{{ url_for('services_lookup') }}" role="button" class="secondary">Back to client list</a>
+            <a href="{{ url_for('dashboard') }}" role="button" class="secondary">Back to dashboard</a>
+        </div>
+    </article>
 {% endblock %}

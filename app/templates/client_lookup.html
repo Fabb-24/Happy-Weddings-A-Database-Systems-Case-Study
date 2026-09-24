@@ -1,6 +1,27 @@
 {% extends "base.html" %}
 {% block title %}Client services | Happy Weddings{% endblock %}
 {% block content %}
-<div class="form-layout"><p class="eyebrow">Operation 04</p><h1>Client services</h1><p class="lede">Select a client to view all services requested in their orders.</p>
-<article><label>Clients</label><div class="client-list">{% for client in clients %}<a class="service-option" href="{{ url_for('client_services', client_ref=client.ref) }}"><span><strong>{{ client.first_name }} {{ client.last_name }}</strong><small>{{ client.phone }}</small></span></a>{% else %}<p class="empty">No clients available.</p>{% endfor %}</div><div class="form-actions"><a href="{{ url_for('dashboard') }}" role="button" class="secondary">Back to dashboard</a></div></article></div>
+    <div class="form-layout">
+        <p class="eyebrow">Operation 04</p>
+        <h1>Client services</h1>
+        <p class="lede">Select a client to view all services requested in their orders.</p>
+        <article>
+            <label>Clients</label>
+            <div class="client-list">
+                {% for client in clients %}
+                    <a class="service-option" href="{{ url_for('client_services', client_ref=client.ref) }}">
+                        <span>
+                            <strong>{{ client.first_name }} {{ client.last_name }}</strong>
+                            <small>{{ client.phone }}</small>
+                        </span>
+                    </a>
+                {% else %}
+                    <p class="empty">No clients available.</p>
+                {% endfor %}
+            </div>
+            <div class="form-actions">
+                <a href="{{ url_for('dashboard') }}" role="button" class="secondary">Back to dashboard</a>
+            </div>
+        </article>
+    </div>
 {% endblock %}
