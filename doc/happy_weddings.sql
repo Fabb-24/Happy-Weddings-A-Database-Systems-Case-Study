@@ -51,7 +51,7 @@ CREATE TYPE Clothing_ty UNDER Service_ty (
 ) NOT INSTANTIABLE NOT FINAL;
 /
  
-CREATE TYPE BridalClothing_ty UNDER Clothing_ty;
+CREATE TYPE BridalClothing_ty UNDER Clothing_ty ();
 /
  
 CREATE TYPE GroomClothing_ty UNDER Clothing_ty (
